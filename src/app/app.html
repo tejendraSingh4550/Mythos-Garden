@@ -1,0 +1,77 @@
+<div class="app-shell" [class.dunes]="biomeId() === 'glass-dunes'" [class.tide]="biomeId() === 'moon-tide'">
+  <aside class="rail">
+    <a class="brand-mark" href="#home" aria-label="Mythos Garden home">m<span>✳</span></a>
+    <div class="rail-rule"></div>
+    <button class="rail-button active" aria-label="World builder">✧</button>
+    <button class="rail-button" aria-label="Field notes" title="Field notes">⌑</button>
+    <button class="rail-button" aria-label="World map" title="World map">◎</button>
+    <div class="rail-bottom"><span class="avatar">A</span></div>
+  </aside>
+
+  <main class="workspace" id="home">
+    <header class="topbar">
+      <div class="breadcrumbs"><span>MY WORLDS</span><span class="crumb-slash">/</span><strong>World 01</strong><span class="autosave"><i></i> LOCAL WORLD</span></div>
+      <div class="top-actions"><button class="icon-button" title="Field guide">☼</button><button class="share-button" (click)="saveGarden()">{{ saved() ? '✓ Saved' : 'Save world' }}</button></div>
+    </header>
+
+    <section class="intro-row">
+      <div><p class="eyebrow">YOUR LITTLE CORNER OF ELSEWHERE</p><h1>Mythos <em>Garden</em></h1><p class="lede">Build a tiny world. See what learns to live there.</p></div>
+      <button class="new-world" (click)="newWorld()"><span>＋</span> New world</button>
+    </section>
+
+    <section class="world-layout">
+      <div class="left-column">
+        <article class="scene-card" [attr.data-biome]="biomeId()">
+          <div class="scene-meta"><span class="scene-chip"><i></i> {{ biome().name }}</span><span class="world-coord">SECTOR 07 · 04</span></div>
+          <div class="landscape" aria-label="Illustration of your imaginary ecosystem">
+            <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+            <div class="moon"></div><div class="star star-a">✦</div><div class="star star-b">·</div><div class="star star-c">✧</div><div class="star star-d">·</div>
+            <div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
+            <div class="mountain mountain-back"></div><div class="mountain mountain-mid"></div>
+            <div class="hill hill-back"></div><div class="hill hill-mid"></div><div class="hill hill-front"></div>
+            <div class="waterline"></div>
+            <div class="plant plant-one"><i></i><i></i><i></i><b></b></div><div class="plant plant-two"><i></i><i></i><i></i><b></b></div><div class="plant plant-three"><i></i><i></i><i></i><b></b></div>
+            <div class="creature creature-a" [class.hidden-creature]="!selected().includes('moth')">✳</div>
+            <div class="creature creature-b" [class.hidden-creature]="!selected().includes('deer')">♧</div>
+            <div class="creature creature-c" [class.hidden-creature]="!selected().includes('whale')">◜</div>
+            <div class="creature creature-d" [class.hidden-creature]="!selected().includes('hare')">⌁</div>
+            <div class="scene-caption"><span>✧</span> A quiet place, becoming itself</div>
+          </div>
+          <div class="scene-footer"><div><span class="footer-label">WORLD MOOD</span><strong>{{ biome().subtitle }}</strong></div><span class="seed">✳ &nbsp; SEED 0842</span></div>
+        </article>
+
+        <section class="climate-panel">
+          <div class="section-heading"><div><p class="eyebrow">THE CONDITIONS</p><h2>Shape the atmosphere</h2></div><span class="live-pill"><i></i> LIVE SIMULATION</span></div>
+          <div class="slider-grid">
+            <label class="slider-control"><span class="slider-icon water-icon">≈</span><span class="slider-copy"><span>Moisture <b>{{ moisture() }}%</b></span><small>Dry air <i>↔</i> Soft rain</small></span><input type="range" min="0" max="100" [value]="moisture()" (input)="setClimate('moisture', $event)" aria-label="Moisture"></label>
+            <label class="slider-control"><span class="slider-icon warm-icon">☼</span><span class="slider-copy"><span>Warmth <b>{{ warmth() }}°</b></span><small>Frost <i>↔</i> Sun-warmed</small></span><input type="range" min="0" max="100" [value]="warmth()" (input)="setClimate('warmth', $event)" aria-label="Warmth"></label>
+            <label class="slider-control"><span class="slider-icon light-icon">✧</span><span class="slider-copy"><span>Starlight <b>{{ starlight() }}%</b></span><small>Dim <i>↔</i> Luminous</small></span><input type="range" min="0" max="100" [value]="starlight()" (input)="setClimate('starlight', $event)" aria-label="Starlight"></label>
+          </div>
+        </section>
+      </div>
+
+      <aside class="right-column">
+        <section class="health-card">
+          <div class="health-top"><span class="eyebrow">ECOSYSTEM PULSE</span><span class="pulse-dot"></span></div>
+          <div class="health-score"><strong>{{ health() }}</strong><span>/ 100</span><svg viewBox="0 0 80 42" aria-label="Ecosystem pulse chart"><path d="M2 32 C10 31 10 18 18 20 S27 37 34 26 43 22 48 27 56 9 62 15 71 16 78 5" /></svg></div>
+          <div class="health-status"><span class="status-dot"></span>{{ status() }}<span class="health-change">+{{ selected().length + 2 }} this week</span></div>
+          <div class="health-divider"></div>
+          <div class="metric-row"><span>Species living here</span><strong>{{ selected().length + 3 }}</strong></div>
+          <div class="metric-row"><span>Native plants</span><strong>06</strong></div>
+          <div class="metric-row"><span>World age</span><strong>12 days</strong></div>
+        </section>
+
+        <section class="biome-section"><div class="section-heading compact"><div><p class="eyebrow">PICK A LANDSCAPE</p><h2>Choose a biome</h2></div><button class="more-button" aria-label="More biomes">···</button></div>
+          <div class="biome-list"><button class="biome-option" *ngFor="let item of biomes" [class.chosen]="biomeId() === item.id" (click)="chooseBiome(item.id)"><span class="biome-icon" [attr.data-id]="item.id">{{ item.icon }}</span><span class="biome-text"><strong>{{ item.name }}</strong><small>{{ item.colors }}</small></span><span class="check">✓</span></button></div>
+        </section>
+
+        <section class="species-section"><div class="section-heading compact"><div><p class="eyebrow">WHO LIVES HERE?</p><h2>Invite a species</h2></div><span class="count-label">{{ selected().length }} SELECTED</span></div>
+          <div class="species-list"><button class="species-option" *ngFor="let item of species" [class.picked]="selected().includes(item.id)" (click)="toggleSpecies(item.id)"><span class="species-icon" [attr.data-tint]="item.tint">{{ item.icon }}</span><span class="species-text"><strong>{{ item.name }}</strong><small>{{ item.role }}</small></span><span class="species-check">{{ selected().includes(item.id) ? '✓' : '+' }}</span></button></div>
+        </section>
+
+        <section class="field-note"><span class="note-mark">“</span><p>When the moths arrive, the flowers begin to dream in color.</p><span class="note-byline">FIELD NOTE · DAY 12</span></section>
+      </aside>
+    </section>
+    <footer class="page-footer"><span>MYTHOS GARDEN <i>✳</i> A WORLD-BUILDING EXPERIMENT</span><span>YOUR WORLD SAVES ON THIS DEVICE</span></footer>
+  </main>
+</div>
